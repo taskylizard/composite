@@ -1,0 +1,82 @@
+version: "3"
+
+networks:
+  gitea:
+    external: false
+  woodpecker:
+
+services:
+  server:
+    image: gitea/gitea:1.20.5
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - IS_TLS_ENABLED=true
+      - GITEA__cache__ENABLED=true
+      - GITEA__cache__ADAPTER=redis
+      - GITEA__cache__HOST=redis://gitea-cache:6379/0?pool_size=100&idle_timeout=180s
+      - GITEA__cache__ITEM_TTL=24h
+    restart: always
+    networks:
+      - gitea
+    volumes:
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "6000:3000"
+      - "2221:22"
+
+  cache:
+    container_name: gitea-cache
+    image: redis:6-alpine
+    restart: unless-stopped
+    networks:
+      - gitea
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 30
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+
+  woodpecker-server:
+    container_name: woodpecker-server
+    image: woodpeckerci/woodpecker-server:latest
+    ports:
+      - 8000:8000
+    volumes:
+      - "./ci:/var/lib/woodpecker"
+    networks:
+      - woodpecker
+    environment:
+      - "WOODPECKER_OPEN=true"
+      - "WOODPECKER_HOST=${WOODPECKER_URL}"
+      - "WOODPECKER_AGENT_SECRET=${WOODPECKER_AGENT_SECRET}"
+      - "WOODPECKER_ADMIN=${WOODPECKER_ADMIN}"
+      - "WOODPECKER_GITEA=true"
+      - "WOODPECKER_GITEA_URL=${WOODPECKER_GITEA_URL}"
+      - "WOODPECKER_GITEA_CLIENT=${WOODPECKER_GITEA_CLIENT}"
+      - "WOODPECKER_GITEA_SECRET=${WOODPECKER_GITEA_SECRET}"
+      - "WOODPECKER_GITEA_SKIP_VERIFY=true"
+
+  woodpecker-agent:
+    container_name: woodpecker-agent
+    image: woodpeckerci/woodpecker-agent:latest
+    command: agent
+    restart: always
+    cpus: 0.5
+    mem_limit: 512m
+    depends_on:
+      - woodpecker-server
+    networks:
+      - woodpecker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WOODPECKER_SERVER=woodpecker-server:9000
+      - WOODPECKER_AGENT_SECRET=${WOODPECKER_AGENT_SECRET}
