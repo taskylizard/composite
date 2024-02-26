@@ -7,7 +7,7 @@ networks:
 
 services:
   server:
-    image: gitea/gitea:1.20.5
+    image: gitea/gitea:1.20.5@sha256:c5458d7be331134c17a32364c171d5111843e5ea61a5a19aac087b1e09ca6835
     container_name: gitea
     environment:
       - USER_UID=1000
@@ -30,7 +30,7 @@ services:
 
   cache:
     container_name: gitea-cache
-    image: redis:6-alpine
+    image: redis:6-alpine@sha256:51d6c56749a4243096327e3fb964a48ed92254357108449cb6e23999c37773c5
     restart: unless-stopped
     networks:
       - gitea
@@ -46,7 +46,7 @@ services:
 
   woodpecker-server:
     container_name: woodpecker-server
-    image: woodpeckerci/woodpecker-server:latest
+    image: woodpeckerci/woodpecker-server:latest@sha256:50b4d16adae91a9be2d73efb093c8a5df43bde228e416efcd71620822478d4a1
     ports:
       - 8000:8000
     volumes:
@@ -66,7 +66,7 @@ services:
 
   woodpecker-agent:
     container_name: woodpecker-agent
-    image: woodpeckerci/woodpecker-agent:latest
+    image: woodpeckerci/woodpecker-agent:latest@sha256:d64898cf9cfa5ae735e904dc421baf6fa1f36df24800793d8f4a455ba964e65f
     command: agent
     restart: always
     cpus: 0.5
