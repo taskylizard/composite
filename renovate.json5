@@ -1,5 +1,6 @@
 {
   // Use recommended defaults
+  "extends": [
     "config:base"
   ],
 
