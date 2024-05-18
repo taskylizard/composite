@@ -66,7 +66,7 @@ services:
 
   woodpecker-agent:
     container_name: woodpecker-agent
-    image: woodpeckerci/woodpecker-agent:latest@sha256:d64898cf9cfa5ae735e904dc421baf6fa1f36df24800793d8f4a455ba964e65f
+    image: woodpeckerci/woodpecker-agent:latest@sha256:b9ae34a3f232ecb570ce37fb5bbeeac6169311a33194f5278e3fb11698fc0bb3
     command: agent
     restart: always
     cpus: 0.5
