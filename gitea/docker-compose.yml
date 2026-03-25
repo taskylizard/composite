@@ -46,7 +46,7 @@ services:
 
   woodpecker-server:
     container_name: woodpecker-server
-    image: woodpeckerci/woodpecker-server:latest@sha256:8725f9aad2fe5d3b1e93e26b3661afd6c7c40ca7ac5e10776a61d16f3699765c
+    image: woodpeckerci/woodpecker-server:latest@sha256:ed8cdc14dad4488d595786373ffbf5c7eea2de9ae183e97fd40308e486cb94a9
     ports:
       - 8000:8000
     volumes:
