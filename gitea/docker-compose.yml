@@ -30,7 +30,7 @@ services:
 
   cache:
     container_name: gitea-cache
-    image: redis:7-alpine@sha256:c8bb255c3559b3e458766db810aa7b3c7af1235b204cfdb304e79ff388fe1a5a
+    image: redis:7-alpine@sha256:8da19c7399dca900c6822a1cf30f9d2285585e2c4b457ff4095b0f4500054d3f
     restart: unless-stopped
     networks:
       - gitea
